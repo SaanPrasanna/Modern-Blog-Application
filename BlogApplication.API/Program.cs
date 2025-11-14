@@ -1,3 +1,4 @@
+using BlogApplication.Application.Interfaces;
 using BlogApplication.Application.Services;
 using BlogApplication.Core.Entities;
 using BlogApplication.Core.Interfaces;
@@ -52,6 +53,8 @@ builder.Services.AddAuthentication(options => {
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPostService, PostService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
+builder.Services.AddScoped<IReactionService, ReactionService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
