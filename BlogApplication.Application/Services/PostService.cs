@@ -1,13 +1,9 @@
-﻿using BlogApplication.Core.DTOs.Post;
+﻿using BlogApplication.Application.Interfaces;
+using BlogApplication.Core.DTOs.Post;
 using BlogApplication.Core.Entities;
 using BlogApplication.Core.Interfaces;
 using BlogApplication.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlogApplication.Application.Services {
     public class PostService : IPostService {

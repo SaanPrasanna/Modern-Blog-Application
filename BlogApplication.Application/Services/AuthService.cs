@@ -1,6 +1,6 @@
-﻿using BlogApplication.Core.DTOs.Auth;
+﻿using BlogApplication.Application.Interfaces;
+using BlogApplication.Core.DTOs.Auth;
 using BlogApplication.Core.Entities;
-using BlogApplication.Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
