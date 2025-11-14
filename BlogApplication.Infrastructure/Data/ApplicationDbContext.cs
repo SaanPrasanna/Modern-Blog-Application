@@ -38,7 +38,7 @@ namespace BlogApplication.Infrastructure.Data {
                 .HasOne(c => c.User)
                 .WithMany(u => u.Comments)
                 .HasForeignKey(c => c.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
             // REACTION - POST Relationship
             builder.Entity<Reaction>()
