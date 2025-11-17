@@ -16,11 +16,11 @@ namespace BlogApplication.API.Controllers {
         }
 
         [HttpGet("post/{postId}/summary")]
-        public async Task<IActionResult> GetPostReactionSummary(Guid id) {
+        public async Task<IActionResult> GetPostReactionSummary(Guid postId) {
             try {
 
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier);
-                var summary = await _reactionService.GetPostReactionSummaryAsync(id, userId?.Value);
+                var summary = await _reactionService.GetPostReactionSummaryAsync(postId, userId?.Value);
                 return Ok(summary);
             } catch (Exception ex) {
                 return BadRequest(new { message = ex.Message });
@@ -45,15 +45,15 @@ namespace BlogApplication.API.Controllers {
         }
 
         [Authorize]
-        [HttpDelete("post/{postId}")]
-        public async Task<IActionResult> DeleteReaction(Guid postId) {
+        [HttpDelete("{reactionId}")]
+        public async Task<IActionResult> DeleteReaction(Guid reactionId) {
             try {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (string.IsNullOrEmpty(userId)) {
                     return Unauthorized(new { message = "User not authenticated" });
                 }
 
-                var result = await _reactionService.DeleteReactionAsync(postId, userId);
+                var result = await _reactionService.DeleteReactionAsync(reactionId, userId);
                 if (result) {
                     return Ok(new { message = "Reaction deleted successfully" });
                 }
