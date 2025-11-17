@@ -16,9 +16,9 @@ namespace BlogApplication.API.Controllers {
         }
 
         [HttpGet("post/{postId}")]
-        public async Task<IActionResult> GetPostComments(Guid id) {
+        public async Task<IActionResult> GetPostComments(Guid postId) {
             try {
-                var comments = await _commentService.GetPostCommentsAsync(id);
+                var comments = await _commentService.GetPostCommentsAsync(postId);
                 return Ok(comments);
             } catch (Exception ex) {
                 return BadRequest(new { message = ex.Message });
