@@ -73,6 +73,11 @@ namespace BlogApplication.Application.Services {
             }
 
             var result = await _userManager.ResetPasswordAsync(user, dto.Token, dto.NewPassword);
+
+            if (!result.Succeeded) {
+                throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
+            }
+
             return result.Succeeded;
         }
 

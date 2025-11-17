@@ -29,12 +29,13 @@ namespace BlogApplication.Application.Services {
             var user = await _context.Users.FindAsync(userId);
 
             return new PostResponseDto {
+                Id = createPost.Id,
                 Title = dto.Title,
                 Content = dto.Content,
                 ImageUrl = dto.ImageUrl,
                 AuthorId = userId,
                 AuthorName = user?.FullName ?? "Unknown",
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = createPost.CreatedAt,
                 CommentsCount = 0,
                 ReactionsCount = 0
             };
