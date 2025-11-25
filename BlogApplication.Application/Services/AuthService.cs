@@ -12,10 +12,12 @@ namespace BlogApplication.Application.Services {
     public class AuthService : IAuthService {
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly IEmailService _emailService;
 
-        public AuthService(UserManager<User> userManager, IConfiguration configuration) {
+        public AuthService(UserManager<User> userManager, IConfiguration configuration, IEmailService emailService) {
             _userManager = userManager;
             _configuration = configuration;
+            _emailService = emailService;
         }
 
         public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto) {
@@ -28,6 +30,7 @@ namespace BlogApplication.Application.Services {
                 Email = dto.Email,
                 UserName = dto.Email,
                 FullName = dto.FullName,
+                EmailConfirmed = false,
             };
 
             var result = await _userManager.CreateAsync(user, dto.Password);
@@ -35,6 +38,10 @@ namespace BlogApplication.Application.Services {
             if (!result.Succeeded) {
                 throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
             }
+
+            var emailToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            await _emailService.SendEmailVerificationAsync(user.Email!, emailToken);
 
             var token = GenerateJwtToken(user);
 
@@ -44,11 +51,16 @@ namespace BlogApplication.Application.Services {
                 FullName = user.FullName ?? string.Empty,
             };
         }
+
         public async Task<AuthResponseDto> LoginAsync(LoginDto dto) {
             var user = await _userManager.FindByEmailAsync(dto.Email);
 
             if (user == null) {
                 throw new Exception("Invalid email or password");
+            }
+
+            if (!user.EmailConfirmed) {
+                throw new Exception("Please verify your email before logging in");
             }
 
             var isPasswordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
@@ -64,6 +76,43 @@ namespace BlogApplication.Application.Services {
                 Email = user.Email!,
                 FullName = user.FullName ?? string.Empty,
             };
+        }
+
+        public async Task<bool> VerifyEmailAsync(string email, string token) {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null) {
+                throw new Exception("User not found");
+            }
+
+            if (user.EmailConfirmed) {
+                throw new Exception("Email is already verified");
+            }
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+
+            if (!result.Succeeded) {
+                throw new Exception("Invalid or expired verification token");
+            }
+
+            return true;
+        }
+
+        public async Task<bool> ResendVerificationEmailAsync(String email) {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null) {
+                throw new Exception("User not found");
+            }
+
+            if (user.EmailConfirmed) {
+                throw new Exception("Email is already verified");
+            }
+
+            var emailToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            await _emailService.SendEmailVerificationAsync(user.Email!, emailToken);
+
+            return true;
         }
 
         public async Task<bool> ResetPasswordAsync(ResetPasswordDto dto) {
