@@ -11,6 +11,7 @@ namespace BlogApplication.Application.Interfaces {
         Task<AuthResponseDto> LoginAsync(LoginDto dto);
         Task<bool> ResetPasswordAsync(ResetPasswordDto dto);
         Task<string> ForgotPasswordAsync(string email);
-
+        Task<bool> VerifyEmailAsync(string email, string token);
+        Task<bool> ResendVerificationEmailAsync(string email);
     }
 }
